@@ -28,7 +28,6 @@ namespace FileSorterWinForm
 
         private void sourcePath_button_Click(object sender, EventArgs e)
         {
-
             if (sourcePath_dialog.ShowDialog() == DialogResult.OK)
                 FillDisplayWithSourcePathData(Path.GetFullPath(sourcePath_dialog.SelectedPath));
         }
@@ -54,6 +53,7 @@ namespace FileSorterWinForm
                 if (messageBox == DialogResult.No)
                     return;
             }
+
             var filesToBeMoved = Directory.GetFiles(sourcePath_textBox.Text,
                                            $"*.{fileType_comboBox.Items[fileType_comboBox.SelectedIndex].ToString().Trim('.')}",
                                            SearchOption.AllDirectories);
@@ -79,13 +79,7 @@ namespace FileSorterWinForm
                 fileSettings.DestinationFolderPath = Path.Combine(destinationPath_textBox.Text, fileSettings.OriginalDate.Year.ToString(), fileSettings.OriginalDate.ToString("MM"));
 
                 if (!Directory.Exists(fileSettings.DestinationFolderPath))
-                {
-                    MessageBox.Show("The folder you selected does not exist.",
-                            "Error",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
-                    return;
-                }
+                    Directory.CreateDirectory(fileSettings.DestinationFolderPath);
 
                 //Destination path + file name
                 fileSettings.FullDestinationPath = Path.Combine(fileSettings.DestinationFolderPath, Path.GetFileName(file));
@@ -135,12 +129,6 @@ namespace FileSorterWinForm
                             "YEAHH!!!",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
-        }
-
-        private void sourcePath_textBox_TextChanged(object sender, EventArgs e)
-        {
-            if (fileType_comboBox.Items.Count == 0)
-                FillDisplayWithSourcePathData(sourcePath_textBox.Text);
         }
 
         private void FillDisplayWithSourcePathData(string sourceDirectory)

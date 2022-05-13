@@ -60,9 +60,9 @@
             // 
             this.sourcePath_textBox.Location = new System.Drawing.Point(144, 13);
             this.sourcePath_textBox.Name = "sourcePath_textBox";
+            this.sourcePath_textBox.ReadOnly = true;
             this.sourcePath_textBox.Size = new System.Drawing.Size(554, 20);
             this.sourcePath_textBox.TabIndex = 1;
-            this.sourcePath_textBox.TextChanged += new System.EventHandler(this.sourcePath_textBox_TextChanged);
             // 
             // sourcePath_label
             // 
