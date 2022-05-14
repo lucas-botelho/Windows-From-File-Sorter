@@ -102,6 +102,7 @@
             // 
             // fileType_comboBox
             // 
+            this.fileType_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.fileType_comboBox.Enabled = false;
             this.fileType_comboBox.FormattingEnabled = true;
             this.fileType_comboBox.Location = new System.Drawing.Point(144, 95);
@@ -127,6 +128,8 @@
             this.result_richTextBox.Size = new System.Drawing.Size(773, 311);
             this.result_richTextBox.TabIndex = 8;
             this.result_richTextBox.Text = "";
+            this.result_richTextBox.ReadOnly = true;
+
             // 
             // runApp_button
             // 
@@ -140,11 +143,16 @@
             // 
             // sortingAction_comboBox
             // 
+            this.sortingAction_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.sortingAction_comboBox.FormattingEnabled = true;
+            this.sortingAction_comboBox.Items.AddRange(new object[] {
+            "Move",
+            "Copy"});
             this.sortingAction_comboBox.Location = new System.Drawing.Point(316, 95);
             this.sortingAction_comboBox.Name = "sortingAction_comboBox";
             this.sortingAction_comboBox.Size = new System.Drawing.Size(121, 21);
             this.sortingAction_comboBox.TabIndex = 10;
+            this.sortingAction_comboBox.SelectedIndex = 0;
             // 
             // label2
             // 

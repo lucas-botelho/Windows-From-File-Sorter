@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FileSorterWinForm.Models
 {
-    class CustomFileSettings
+    public class CustomFileSettings
     {
 
         public CustomFileSettings()
@@ -18,7 +18,7 @@ namespace FileSorterWinForm.Models
 
         public DateTime ModifiedDate { get; set; }
 
-        public DateTime OriginalDate { get; set; }
+        public DateTime PictureDate { get; set; }
 
         public int MovedFiles { get; set; }
 

@@ -6,24 +6,30 @@ using System.Linq;
 using System.Windows.Forms;
 using FileSorterWinForm.Extensions;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Text;
+using System.Text.RegularExpressions;
+using FileSorterWinForm.Repositories.Interfaces;
 
 namespace FileSorterWinForm
 {
     public partial class Form1 : Form
     {
+        private IFileDateRepository fileDateRepository { get; set; }
+
         public Form1()
         {
             InitializeComponent();
+            fileDateRepository = (IFileDateRepository)Program.ServiceProvider.GetService(typeof(IFileDateRepository));
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            result_richTextBox.ReadOnly = true;
+            //result_richTextBox.ReadOnly = true;
 
-            sortingAction_comboBox.Items.Add("Move");
-            sortingAction_comboBox.Items.Add("Copy");
-            sortingAction_comboBox.SelectedIndex = 0;
-            sortingAction_comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            //sortingAction_comboBox.Items.Add("Move");
+            //sortingAction_comboBox.Items.Add("Copy");
+            //sortingAction_comboBox.SelectedIndex = 0;
         }
 
         private void sourcePath_button_Click(object sender, EventArgs e)
@@ -59,24 +65,19 @@ namespace FileSorterWinForm
                                            SearchOption.AllDirectories);
 
             var fileSettings = new CustomFileSettings();
-
             progressBar1.Visible = true;
             var progress = 0;
 
             foreach (var file in filesToBeMoved)
             {
                 fileSettings.SourcePath = Path.GetFullPath(file);
-                fileSettings.ModifiedDate = new FileInfo(fileSettings.SourcePath).LastWriteTimeUtc;
-                fileSettings.CreationDate = new FileInfo(fileSettings.SourcePath).CreationTime;
 
-                //Handle gopro files -- GOPRO file set modified date as 2016
-                if (file.StartsWith("GH") || file.StartsWith("GOPR") || file.StartsWith("GX"))
-                    fileSettings.OriginalDate = fileSettings.CreationDate;
-                else
-                    fileSettings.OriginalDate = fileSettings.ModifiedDate < fileSettings.CreationDate ? fileSettings.ModifiedDate : fileSettings.CreationDate;
+                fileSettings.PictureDate = fileDateRepository.GetDateTakenFromImage(fileSettings.SourcePath);
+                if (fileSettings.PictureDate == DateTime.MinValue)
+                    fileDateRepository.GetFileDateFromFileInfo(fileSettings);
 
                 //Create target directory path with [target directory + year + month]
-                fileSettings.DestinationFolderPath = Path.Combine(destinationPath_textBox.Text, fileSettings.OriginalDate.Year.ToString(), fileSettings.OriginalDate.ToString("MM"));
+                fileSettings.DestinationFolderPath = Path.Combine(destinationPath_textBox.Text, fileSettings.PictureDate.Year.ToString(), fileSettings.PictureDate.ToString("MM"));
 
                 if (!Directory.Exists(fileSettings.DestinationFolderPath))
                     Directory.CreateDirectory(fileSettings.DestinationFolderPath);
