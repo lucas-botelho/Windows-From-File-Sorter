@@ -27,5 +27,10 @@ namespace FileSorterWinForm.Models
         public string DestinationFolderPath { get; set; }
 
         public string FullDestinationPath { get; set; }
+
+        public string FileName { get; set; }
+
+        public string FileExtension { get; set; }
+
     }
 }

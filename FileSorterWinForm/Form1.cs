@@ -25,11 +25,7 @@ namespace FileSorterWinForm
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //result_richTextBox.ReadOnly = true;
 
-            //sortingAction_comboBox.Items.Add("Move");
-            //sortingAction_comboBox.Items.Add("Copy");
-            //sortingAction_comboBox.SelectedIndex = 0;
         }
 
         private void sourcePath_button_Click(object sender, EventArgs e)
@@ -82,47 +78,49 @@ namespace FileSorterWinForm
                 if (!Directory.Exists(fileSettings.DestinationFolderPath))
                     Directory.CreateDirectory(fileSettings.DestinationFolderPath);
 
-                //Destination path + file name
-                fileSettings.FullDestinationPath = Path.Combine(fileSettings.DestinationFolderPath, Path.GetFileName(file));
+                fileSettings.FileName = Path.GetFileNameWithoutExtension(file);
+                fileSettings.FileExtension = Path.GetExtension(file);
+                fileSettings.FullDestinationPath = Path.Combine(fileSettings.DestinationFolderPath, fileSettings.FileName + fileSettings.FileExtension);
 
-                if (!Directory.Exists(fileSettings.FullDestinationPath))
+                if (File.Exists(fileSettings.FullDestinationPath))
                 {
-                    try
-                    {
-                        switch (sortingAction_comboBox.Items[sortingAction_comboBox.SelectedIndex])
-                        {
-                            case "Move":
-                                File.Move(fileSettings.SourcePath, fileSettings.FullDestinationPath);
-                                break;
-                            case "Copy":
-                            default:
-                                File.Copy(fileSettings.SourcePath, fileSettings.FullDestinationPath, false);
-                                break;
-                        }
-
-                        fileSettings.MovedFiles++;
-
-                        progress++;
-                        ManageProgressBar(progress, filesToBeMoved);
-
-                        result_richTextBox.AppendText($"Moved file:", Color.Green);
-                        result_richTextBox.AppendText($"{Path.GetFileName(file)}", Color.Blue);
-                        result_richTextBox.AppendText($" from: ", Color.Green);
-                        result_richTextBox.AppendText($"{fileSettings.SourcePath}", Color.Blue);
-                        result_richTextBox.AppendText($" to: ", Color.Green);
-                        result_richTextBox.AppendText($"{fileSettings.FullDestinationPath}", Color.Blue, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        progress++;
-                        ManageProgressBar(progress, filesToBeMoved);
-
-                        result_richTextBox.AppendText($"Could not copy file --> {Path.GetFullPath(file)}", Color.Red, true);
-                        result_richTextBox.AppendText($"Message: {ex.Message}", Color.DarkGoldenrod, true);
-                    }
+                    ChangeDuplicatedFileName(fileSettings);
+                    fileSettings.FullDestinationPath = fileSettings.FullDestinationPath.Replace(Path.GetFileNameWithoutExtension(fileSettings.FullDestinationPath), fileSettings.FileName );
                 }
-                else
-                    result_richTextBox.AppendText($"A file with the name:{Path.GetFileName(file)} already exists. Path: {fileSettings.SourcePath}", Color.Red, true);
+
+                try
+                {
+                    switch (sortingAction_comboBox.Items[sortingAction_comboBox.SelectedIndex])
+                    {
+                        case "Move":
+                            File.Move(fileSettings.SourcePath, fileSettings.FullDestinationPath);
+                            break;
+                        case "Copy":
+                        default:
+                            File.Copy(fileSettings.SourcePath, fileSettings.FullDestinationPath, false);
+                            break;
+                    }
+
+                    fileSettings.MovedFiles++;
+
+                    progress++;
+                    ManageProgressBar(progress, filesToBeMoved);
+
+                    result_richTextBox.AppendText($"Moved file:", Color.Green);
+                    result_richTextBox.AppendText($"{Path.GetFileName(file)}", Color.Blue);
+                    result_richTextBox.AppendText($" from: ", Color.Green);
+                    result_richTextBox.AppendText($"{fileSettings.SourcePath}", Color.Blue);
+                    result_richTextBox.AppendText($" to: ", Color.Green);
+                    result_richTextBox.AppendText($"{fileSettings.FullDestinationPath}", Color.Blue, true);
+                }
+                catch (Exception ex)
+                {
+                    progress++;
+                    ManageProgressBar(progress, filesToBeMoved);
+
+                    result_richTextBox.AppendText($"Could not copy file --> {Path.GetFullPath(file)}", Color.Red, true);
+                    result_richTextBox.AppendText($"Message: {ex.Message}", Color.DarkGoldenrod, true);
+                }
             }
 
             result_richTextBox.AppendText($"Total files moves: {fileSettings.MovedFiles}");
@@ -135,6 +133,7 @@ namespace FileSorterWinForm
         private void FillDisplayWithSourcePathData(string sourceDirectory)
         {
             sourcePath_textBox.Text = sourceDirectory;
+            var comboBoxHasItems = fileType_comboBox.Items.Count > 0 ? true : false;
 
             var allFiles = Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories);
 
@@ -146,26 +145,44 @@ namespace FileSorterWinForm
                 result_richTextBox.AppendText($"{Path.GetFileNameWithoutExtension(file)}", Color.DarkGoldenrod);
                 result_richTextBox.AppendText($"{Path.GetExtension(file)}", Color.HotPink, true);
 
-                if (!fileExtensions.Contains(Path.GetExtension(file)))
+                if (!fileExtensions.Contains(Path.GetExtension(file)) && !comboBoxHasItems)
                     fileExtensions.Add(Path.GetExtension(file));
             }
 
             result_richTextBox.AppendText($"Total files: {allFiles.Count()}", Color.Black, true);
 
             //Fill comboBox values
-            foreach (var extension in fileExtensions)
-                fileType_comboBox.Items.Add(extension);
+            if (!comboBoxHasItems)
+            {
+                foreach (var extension in fileExtensions)
+                    fileType_comboBox.Items.Add(extension);
 
-            fileType_comboBox.Items.Add("*");
-            fileType_comboBox.SelectedIndex = 0;
-            fileType_comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            fileType_comboBox.Enabled = true;
+                fileType_comboBox.Items.Add("*");
+                fileType_comboBox.SelectedIndex = 0;
+                fileType_comboBox.Enabled = true;
+            }
         }
 
         private void ManageProgressBar(int progress, string[] filesToBeMoved)
         {
             progressBar1.Value = progress * 100 / filesToBeMoved.Count();
             progressBar_label.Text = progressBar1.Value.ToString() + "%";
+
+        }
+
+        private void ChangeDuplicatedFileName(CustomFileSettings fileSettings)
+        {
+            var repeatedFileCount = 0;
+            var filePath = fileSettings.FullDestinationPath;
+            while (File.Exists(filePath))
+            {
+                if (repeatedFileCount == 0)
+                    fileSettings.FileName += $"({++repeatedFileCount})";
+                else
+                    fileSettings.FileName = fileSettings.FileName.Replace($"({repeatedFileCount})", $"({++repeatedFileCount})");
+
+                filePath = filePath.Replace(Path.GetFileNameWithoutExtension(filePath), fileSettings.FileName);
+            }
 
         }
     }

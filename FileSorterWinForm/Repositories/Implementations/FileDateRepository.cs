@@ -18,21 +18,24 @@ namespace FileSorterWinForm.Repositories.Implementations
         {
             Regex r = new Regex(":");
             string dateTaken = string.Empty;
-            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
-            using (Image myImage = Image.FromStream(fs, false, false))
+            try
             {
-                try
+                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+                using (Image myImage = Image.FromStream(fs, false, false))
                 {
+
                     PropertyItem propItem = myImage.GetPropertyItem(36867);
                     dateTaken = r.Replace(Encoding.UTF8.GetString(propItem.Value), "-", 2);
-                }
-                catch (Exception)
-                {
-                    return new DateTime();
-                }
 
-                return DateTime.Parse(dateTaken);
+                }
             }
+            catch (Exception)
+            {
+                return new DateTime();
+            }
+
+            return DateTime.Parse(dateTaken);
+
         }
 
         public void GetFileDateFromFileInfo(CustomFileSettings fileSettings)
