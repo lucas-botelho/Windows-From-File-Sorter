@@ -31,7 +31,7 @@ namespace FileSorterWinForm
         private void sourcePath_button_Click(object sender, EventArgs e)
         {
             if (sourcePath_dialog.ShowDialog() == DialogResult.OK)
-                FillDisplayWithSourcePathData(Path.GetFullPath(sourcePath_dialog.SelectedPath));
+                ShowFileDetaildAndFillComboBox(Path.GetFullPath(sourcePath_dialog.SelectedPath));
         }
 
         private void destionationPath_button_Click(object sender, EventArgs e)
@@ -130,10 +130,11 @@ namespace FileSorterWinForm
                             MessageBoxIcon.Information);
         }
 
-        private void FillDisplayWithSourcePathData(string sourceDirectory)
+        private void ShowFileDetaildAndFillComboBox(string sourceDirectory)
         {
             sourcePath_textBox.Text = sourceDirectory;
-            var comboBoxHasItems = fileType_comboBox.Items.Count > 0 ? true : false;
+
+            fileType_comboBox.Items.Clear();
 
             var allFiles = Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories);
 
@@ -145,22 +146,20 @@ namespace FileSorterWinForm
                 result_richTextBox.AppendText($"{Path.GetFileNameWithoutExtension(file)}", Color.DarkGoldenrod);
                 result_richTextBox.AppendText($"{Path.GetExtension(file)}", Color.HotPink, true);
 
-                if (!fileExtensions.Contains(Path.GetExtension(file)) && !comboBoxHasItems)
+                if (!fileExtensions.Contains(Path.GetExtension(file)))
                     fileExtensions.Add(Path.GetExtension(file));
             }
 
             result_richTextBox.AppendText($"Total files: {allFiles.Count()}", Color.Black, true);
 
             //Fill comboBox values
-            if (!comboBoxHasItems)
-            {
+
                 foreach (var extension in fileExtensions)
                     fileType_comboBox.Items.Add(extension);
 
                 fileType_comboBox.Items.Add("*");
                 fileType_comboBox.SelectedIndex = 0;
                 fileType_comboBox.Enabled = true;
-            }
         }
 
         private void ManageProgressBar(int progress, string[] filesToBeMoved)
