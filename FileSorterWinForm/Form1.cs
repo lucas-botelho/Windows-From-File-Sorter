@@ -31,7 +31,16 @@ namespace FileSorterWinForm
         private void sourcePath_button_Click(object sender, EventArgs e)
         {
             if (sourcePath_dialog.ShowDialog() == DialogResult.OK)
-                ShowFileDetaildAndFillComboBox(Path.GetFullPath(sourcePath_dialog.SelectedPath));
+            {
+                var sourceDirectory = Path.GetFullPath(sourcePath_dialog.SelectedPath);
+
+                sourcePath_textBox.Text = sourceDirectory;
+
+                var allFiles = Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories);
+
+                WriteFileNameAndExtensionOnTextBox(allFiles.ToList());
+                FillComboBoxWithFileExtensions(GetFilesExtensionsTypes(allFiles.ToList()));
+            }
         }
 
         private void destionationPath_button_Click(object sender, EventArgs e)
@@ -130,49 +139,62 @@ namespace FileSorterWinForm
                             MessageBoxIcon.Information);
         }
 
-        private void ShowFileDetaildAndFillComboBox(string sourceDirectory)
+        private void FillComboBoxWithFileExtensions(List<string> fileExtensions)
         {
-            sourcePath_textBox.Text = sourceDirectory;
-
             fileType_comboBox.Items.Clear();
 
-            var allFiles = Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories);
+            //Fill comboBox values
+            foreach (var extension in fileExtensions)
+                fileType_comboBox.Items.Add(extension);
 
-            var fileExtensions = new List<string>();
+            fileType_comboBox.Items.Add("*");
+            fileType_comboBox.SelectedIndex = 0;
+            fileType_comboBox.Enabled = true;
+        }
 
-            //Display all file and get existing extensions
+        private void WriteFileNameAndExtensionOnTextBox(List<string> allFiles)
+        {
             foreach (var file in allFiles)
             {
                 result_richTextBox.AppendText($"{Path.GetFileNameWithoutExtension(file)}", Color.DarkGoldenrod);
                 result_richTextBox.AppendText($"{Path.GetExtension(file)}", Color.HotPink, true);
-
-                if (!fileExtensions.Contains(Path.GetExtension(file)))
-                    fileExtensions.Add(Path.GetExtension(file));
             }
 
-            result_richTextBox.AppendText($"Total files: {allFiles.Count()}", Color.Black, true);
+            result_richTextBox.AppendText($"Total files: {allFiles.Count()}", Color.Black, true);         
+        }
 
-            //Fill comboBox values
+        private 
 
-                foreach (var extension in fileExtensions)
-                    fileType_comboBox.Items.Add(extension);
+        /// <summary>
+        /// Return a list of file extensions existing in a list of files
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        public static List<string> GetFilesExtensionsTypes(List<string> files)
+        {
+            var fileExtensions = new List<string>();
 
-                fileType_comboBox.Items.Add("*");
-                fileType_comboBox.SelectedIndex = 0;
-                fileType_comboBox.Enabled = true;
+            files.ForEach(x =>
+            {
+                if (!fileExtensions.Contains(Path.GetExtension(x)))
+                    fileExtensions.Add(Path.GetExtension(x));
+            });
+
+            return fileExtensions;
+
         }
 
         private void ManageProgressBar(int progress, string[] filesToBeMoved)
         {
             progressBar1.Value = progress * 100 / filesToBeMoved.Count();
             progressBar_label.Text = progressBar1.Value.ToString() + "%";
-
         }
 
         private void ChangeDuplicatedFileName(CustomFileSettings fileSettings)
         {
             var repeatedFileCount = 0;
             var filePath = fileSettings.FullDestinationPath;
+
             while (File.Exists(filePath))
             {
                 if (repeatedFileCount == 0)
