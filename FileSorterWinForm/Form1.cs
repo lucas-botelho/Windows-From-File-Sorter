@@ -162,16 +162,15 @@ namespace FileSorterWinForm
 
             result_richTextBox.AppendText($"Total files: {allFiles.Count()}", Color.Black, true);         
         }
-
-        private 
+ 
 
         /// <summary>
         /// Return a list of file extensions existing in a list of files
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        public static List<string> GetFilesExtensionsTypes(List<string> files)
-        {
+        private static List<string> GetFilesExtensionsTypes(List<string> files)
+        { 
             var fileExtensions = new List<string>();
 
             files.ForEach(x =>
