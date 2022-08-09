@@ -99,10 +99,19 @@
     </Compile>
     <Compile Include="Models\CustomComboBoxValues.cs" />
     <Compile Include="Models\CustomFileSettings.cs" />
+    <Compile Include="Models\File\Base\CustomFileBase.cs" />
+    <Compile Include="Models\File\GenericImageFile.cs" />
+    <Compile Include="Models\File\GoProImageFile.cs" />
+    <Compile Include="Models\File\Interfaces\IFile.cs" />
+    <Compile Include="Models\File\Interfaces\IFileSettings.cs" />
+    <Compile Include="Patterns\Factory\Implementations\CustomFileFactory.cs" />
+    <Compile Include="Patterns\Factory\Interfaces\ICustomFileFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\Implementations\FileDateRepository.cs" />
-    <Compile Include="Repositories\Interfaces\IFileDateRepository.cs" />
+    <Compile Include="Repositories\Implementations\FileRepository.cs" />
+    <Compile Include="Repositories\Implementations\FormRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IFileRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IFormRepository.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

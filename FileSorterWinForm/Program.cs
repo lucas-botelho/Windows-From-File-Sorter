@@ -1,4 +1,6 @@
-﻿using FileSorterWinForm.Repositories.Implementations;
+﻿using FileSorterWinForm.Patterns.Factory.Implementations;
+using FileSorterWinForm.Patterns.Factory.Interfaces;
+using FileSorterWinForm.Repositories.Implementations;
 using FileSorterWinForm.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -16,7 +18,9 @@ namespace FileSorterWinForm
         static void ConfigureServices()
         {
             var services = new ServiceCollection();
-            services.AddTransient<IFileDateRepository, FileDateRepository>();
+            services.AddTransient<IFileRepository, FileRepository>();
+            services.AddTransient<IFormRepository, FormRepository>();
+            services.AddTransient<ICustomFileFactory, CustomFileFactory>();
             ServiceProvider = services.BuildServiceProvider();
         }
         /// <summary>
