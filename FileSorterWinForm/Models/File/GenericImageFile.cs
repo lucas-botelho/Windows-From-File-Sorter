@@ -11,7 +11,7 @@ namespace FileSorterWinForm.Models.Files
 {
     public class GenericImageFile : CustomFileBase
     {
-        public GenericImageFile(string filePath) : base(filePath)
+        public GenericImageFile(string filePath, string fileDestinationPath) : base(filePath, fileDestinationPath)
         {
         }
 

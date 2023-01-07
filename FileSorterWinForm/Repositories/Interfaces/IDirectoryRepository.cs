@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileSorterWinForm.Patterns.Factory.Interfaces
+namespace FileSorterWinForm.Repositories.Interfaces
 {
-    public interface ICustomFileFactory
+    public interface IDirectoryRepository
     {
-        IFile CreateCustomFile(string filePath, string fileDestinationPath);
+        void BuildFileDirectory(IFile file);
     }
 }

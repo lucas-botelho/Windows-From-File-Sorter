@@ -11,23 +11,23 @@ using System.Text.RegularExpressions;
 using FileSorterWinForm.Repositories.Interfaces;
 using FileSorterWinForm.Models.Files;
 using FileSorterWinForm.Models.Files.Interfaces;
-using FileSorterWinForm.Models.Files.Bases;
+using FileSorterWinForm.Extensions;
 using FileSorterWinForm.Patterns.Factory.Interfaces;
 
 namespace FileSorterWinForm
 {
     public partial class Form1 : Form
     {
+        #region Private Properties
         private IFileRepository fileRepository { get; set; }
-        private IFormRepository formRepository { get; set; }
-        private ICustomFileFactory customFileFactory { get; set; }
+        private IFormUIRepository winFormRepository { get; set; }
+        #endregion
 
         public Form1()
         {
             InitializeComponent();
             fileRepository = (IFileRepository)Program.ServiceProvider.GetService(typeof(IFileRepository));
-            formRepository = (IFormRepository)Program.ServiceProvider.GetService(typeof(IFormRepository));
-            customFileFactory = (ICustomFileFactory)Program.ServiceProvider.GetService(typeof(ICustomFileFactory));
+            winFormRepository = (IFormUIRepository)Program.ServiceProvider.GetService(typeof(IFormUIRepository));
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -45,8 +45,8 @@ namespace FileSorterWinForm
 
                 var allFiles = Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories);
 
-                formRepository.WriteFileNameAndExtensionOnRichTextBox(result_richTextBox, allFiles.ToList());
-                formRepository.WriteComboBoxWithFileExtensions(fileType_comboBox, fileRepository.GetFilesExtensionsTypes(allFiles.ToList()));
+                winFormRepository.WriteFileNameAndExtensionOnRichTextBox(result_richTextBox, allFiles.ToList());
+                winFormRepository.WriteComboBoxWithFileExtensions(fileType_comboBox, fileRepository.GetFilesExtensionsTypes(allFiles.ToList()));
             }
         }
 
@@ -58,42 +58,31 @@ namespace FileSorterWinForm
 
         private void runApp_button_Click(object sender, EventArgs e)
         {
-            if (sortingAction_comboBox.Items[sortingAction_comboBox.SelectedIndex].Equals("Move"))
-            {
-                DialogResult messageBox = MessageBox.Show("Moving your files can be risky, are you sure you want to proceed?",
-                                                    "Warning",
-                                                    MessageBoxButtons.YesNo,
-                                                    MessageBoxIcon.Warning);
-                if (messageBox == DialogResult.No)
-                    return;
-            }
+            int filesMovedCount = 0, filesNotMovedCount = 0, progressBarValue = 0 ;
+            var sortingMethod = sortingAction_comboBox.Items[sortingAction_comboBox.SelectedIndex].Equals("Move");
+            //factory here
 
-            int filesMovedCount, filesNotMovedCount;
-            filesMovedCount = filesNotMovedCount = 0;
             progressBar1.Visible = true;
 
-            var filesPathsToBeMoved = Directory.GetFiles(sourcePath_textBox.Text,
+            var filePathsToBeMoved = Directory.GetFiles(sourcePath_textBox.Text,
                                            $"*.{fileType_comboBox.Items[fileType_comboBox.SelectedIndex].ToString().Trim('.')}",
-                                           SearchOption.AllDirectories);            
+                                           SearchOption.AllDirectories);
 
-            foreach (var filePath in filesPathsToBeMoved)
+            foreach (var filePath in filePathsToBeMoved)
             {                
-                IFile file = customFileFactory.CreateCustomFile(filePath);
+                //IFile file = customFileFactory.CreateCustomFile(filePath, destinationPath_textBox.Text);
 
-                if (!Directory.Exists(file.DirectoryDestinationPath))
-                    Directory.CreateDirectory(file.DirectoryDestinationPath);
-
-                if (File.Exists(file.FileDestinationPath))
-                    fileRepository.HandleDuplicatedFileName(file);
+                //can be encapsulated create file directory - start
+                
+                //end
 
                 try
                 {
                     switch (sortingAction_comboBox.Items[sortingAction_comboBox.SelectedIndex])
                     {
-                        case "Move":
-                            File.Move(file.FileFullPath, file.FileDestinationPath);
+                        case Constants.SortingMethodOption.Move:
                             break;
-                        case "Copy":
+                        case Constants.SortingMethodOption.Copy:
                         default:
                             File.Copy(file.FileFullPath, file.FileDestinationPath, false);
                             break;
@@ -101,26 +90,23 @@ namespace FileSorterWinForm
 
                     filesMovedCount++;
 
-                    formRepository.IncrementProgressBar(progressBar1, filesPathsToBeMoved.Count());
-                    formRepository.IncrementProgressBarLabel(progressBar_label, filesPathsToBeMoved.Count());
-                    formRepository.WriteFileSuccessStatusOnRichTextBox(result_richTextBox, file);
+                    winFormRepository.WriteFileSuccessStatusOnRichTextBox(result_richTextBox, file);
                 }
                 catch (Exception ex)
                 {
                     filesNotMovedCount++;
-                    formRepository.IncrementProgressBar(progressBar1, filesPathsToBeMoved.Count());
-                    formRepository.IncrementProgressBarLabel(progressBar_label, filesPathsToBeMoved.Count());
-                    formRepository.WriteFileFailStatusOnRichTextBox(result_richTextBox, file, ex.Message);
+                    winFormRepository.WriteFileFailStatusOnRichTextBox(result_richTextBox, file, ex.Message);
                 }
+
+                progressBarValue = winFormRepository.IncrementProgressBar(progressBar1, filePathsToBeMoved.Count());
+                winFormRepository.IncrementProgressBarLabel(progressBar_label, progressBarValue);
             }
 
-            result_richTextBox.AppendText($"Total files moved: {filesMovedCount}");
+            //Can be moved to it's own function
+            result_richTextBox.AppendText($"Total files moved: {filesMovedCount}", Color.Black, true);
             result_richTextBox.AppendText($"Total files not moved: {filesNotMovedCount}");
 
-            MessageBox.Show("Job done!",
-                            "YEAHH!!!",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+            MessageBox.Show("Job done!", "YEAHH!!!", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
     }

@@ -12,7 +12,6 @@ namespace FileSorterWinForm.Repositories.Interfaces
     {
         DateTime GetFileDateFromImageProperties(string path);
         void FillFileDatesFromFileInfo(IFile fileSettings);
-        void FillImageObjectFileDates(IFile file);
         void ChangeDuplicatedFileName(IFile file);
         IFile HandleDuplicatedFileName(IFile file);
         void ChangeDuplicatedFilePath(IFile file);

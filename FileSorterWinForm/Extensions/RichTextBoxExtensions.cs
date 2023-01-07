@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace FileSorterWinForm.Extensions
 {
-    public static class RichTextBoxColorExtensions
+    public static class RichTextBoxExtensions
     {
         public static void AppendText(this RichTextBox rtb, string text, Color color, bool isNewLine = false)
         {

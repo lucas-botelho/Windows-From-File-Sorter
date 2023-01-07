@@ -10,7 +10,7 @@ using FileSorterWinForm.Extensions;
 
 namespace FileSorterWinForm.Repositories.Interfaces
 {
-    public interface IFormRepository
+    public interface IFormUIRepository
     {
         void WriteComboBoxWithFileExtensions(ComboBox comboBox, List<string> fileExtensions);
         void WriteFileNameAndExtensionOnRichTextBox(RichTextBox textbox, List<string> allFiles);

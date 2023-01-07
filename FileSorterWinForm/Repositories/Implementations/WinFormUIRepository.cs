@@ -12,16 +12,16 @@ using System.IO;
 
 namespace FileSorterWinForm.Repositories.Implementations
 {
-    public class FormRepository : IFormRepository
+    public class WinFormUIRepository : IFormUIRepository
     {
-        private const int UNDRED_PERCENT = 100;
+        private const int UNDRED = 100;
         public int IncrementProgressBar(ProgressBar progressBar, int totalFilesToBeMoved)
         {
-            var progress = progressBar.Value * totalFilesToBeMoved / UNDRED_PERCENT;
+            var progress = Math.Ceiling(Convert.ToDecimal(progressBar.Value * totalFilesToBeMoved % UNDRED) / UNDRED);
 
             progress++;
             
-            progressBar.Value = progress * UNDRED_PERCENT / totalFilesToBeMoved;
+            progressBar.Value = (int)progress * UNDRED / totalFilesToBeMoved;
 
             return progressBar.Value;
         }
@@ -52,7 +52,7 @@ namespace FileSorterWinForm.Repositories.Implementations
         public void WriteFileSuccessStatusOnRichTextBox(RichTextBox textbox, IFile file)
         {
             textbox.AppendText($"Moved file:", Color.Green);
-            textbox.AppendText($"{file.FileName}", Color.Blue);
+            textbox.AppendText($"{file.FileNameWithoutExtension}", Color.Blue);
             textbox.AppendText($" from: ", Color.Green);
             textbox.AppendText($"{file.FileFullPath}", Color.Blue);
             textbox.AppendText($" to: ", Color.Green);

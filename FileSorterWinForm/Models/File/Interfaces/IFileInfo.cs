@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FileSorterWinForm.Models.Files.Interfaces
 {
-    public interface IFileSettings
+    public interface IFileInfo
     {
         string FileDestinationPath { get; set; }
         string DirectoryDestinationPath { get; set; }

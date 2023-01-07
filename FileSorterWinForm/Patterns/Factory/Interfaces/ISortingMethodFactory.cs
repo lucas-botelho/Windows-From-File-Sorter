@@ -1,4 +1,4 @@
-﻿using FileSorterWinForm.Models.Files.Interfaces;
+﻿using FileSorterWinForm.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace FileSorterWinForm.Patterns.Factory.Interfaces
 {
-    public interface ICustomFileFactory
+    public interface ISortingMethodFactory
     {
-        IFile CreateCustomFile(string filePath, string fileDestinationPath);
+        ISortingMethodSerivce CreatinSortingMethodRepository(string method);
     }
 }

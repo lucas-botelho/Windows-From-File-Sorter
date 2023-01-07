@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace FileSorterWinForm.Models.Files.Interfaces
 {
-    public interface IFile : IFileSettings
+    public interface IFile : IFileInfo
     {
         DateTime CreationDate { get; set; }
         DateTime ModifiedDate { get; set; }
         string FileFullPath { get; set; }
-        string FileName { get; set; }
+        string FileDirectory { get; set; }
+        string FileNameWithoutExtension { get; set; }
         string FileExtension { get; set; }
 
         /// <summary>

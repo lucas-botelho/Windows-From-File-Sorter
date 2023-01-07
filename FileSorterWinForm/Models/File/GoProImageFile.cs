@@ -11,7 +11,7 @@ namespace FileSorterWinForm.Models.Files
 {
     public class GoProImageFile : CustomFileBase
     {
-        public GoProImageFile(string filePath) : base(filePath)
+        public GoProImageFile(string filePath, string fileDestinationPath) : base(filePath, fileDestinationPath)
         {
 
         }

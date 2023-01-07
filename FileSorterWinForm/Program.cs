@@ -18,8 +18,8 @@ namespace FileSorterWinForm
         static void ConfigureServices()
         {
             var services = new ServiceCollection();
-            services.AddTransient<IFileRepository, FileRepository>();
-            services.AddTransient<IFormRepository, FormRepository>();
+            services.AddTransient<IFileRepository, FileInfoRepository>();
+            services.AddTransient<IFormUIRepository, WinFormUIRepository>();
             services.AddTransient<ICustomFileFactory, CustomFileFactory>();
             ServiceProvider = services.BuildServiceProvider();
         }

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace FileSorterWinForm.Repositories.Implementations
 {
-    class FileRepository : IFileRepository
+    class FileInfoRepository : IFileRepository
     {
         public DateTime GetFileDateFromImageProperties(string path)
         {
@@ -46,14 +46,6 @@ namespace FileSorterWinForm.Repositories.Implementations
             file.CreationDate = fileInfo.CreationTime;
         }
 
-        public void FillImageObjectFileDates(IFile file)
-        {
-            file.CreationDate = GetFileDateFromImageProperties(file.FileFullPath);
-            if (file.CreationDate == DateTime.MinValue)
-                FillFileDatesFromFileInfo(file);
-        }
-
-
         public void ChangeDuplicatedFileName(IFile file)
         {
             var repeatedFileCount = 0;
@@ -62,35 +54,36 @@ namespace FileSorterWinForm.Repositories.Implementations
             while (File.Exists(filePath))
             {
                 if (repeatedFileCount == 0)
-                    file.FileName += $"({++repeatedFileCount})";
+                    file.FileNameWithoutExtension += $"({++repeatedFileCount})";
                 else
-                    file.FileName = file.FileName.Replace($"({repeatedFileCount})", $"({++repeatedFileCount})");
+                    file.FileNameWithoutExtension = file.FileNameWithoutExtension.Replace($"({repeatedFileCount})", $"({++repeatedFileCount})");
 
-                filePath = filePath.Replace(Path.GetFileNameWithoutExtension(filePath), file.FileName);
+                filePath = filePath.Replace(Path.GetFileNameWithoutExtension(filePath), file.FileNameWithoutExtension);
             }
         }
 
         public IFile HandleDuplicatedFileName(IFile file)
         {
+            //move to abstract class and make them private
             ChangeDuplicatedFileName(file);
             ChangeDuplicatedFilePath(file);
-
+            
             return file;
         }
 
         public void ChangeDuplicatedFilePath(IFile file)
         {
-            file.FileDestinationPath = file.FileDestinationPath.Replace(Path.GetFileNameWithoutExtension(file.FileDestinationPath), file.FileName);
+            file.FileDestinationPath = file.FileDestinationPath.Replace(Path.GetFileNameWithoutExtension(file.FileDestinationPath), file.FileNameWithoutExtension);
         }
 
         public List<string> GetFilesExtensionsTypes(List<string> files)
         {
             var fileExtensions = new List<string>();
 
-            files.ForEach(x =>
+            files.ForEach(file =>
             {
-                if (!fileExtensions.Contains(Path.GetExtension(x)))
-                    fileExtensions.Add(Path.GetExtension(x));
+                if (!fileExtensions.Contains(Path.GetExtension(file)))
+                    fileExtensions.Add(Path.GetExtension(file));
             });
 
             return fileExtensions;

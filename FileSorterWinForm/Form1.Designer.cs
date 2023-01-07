@@ -105,6 +105,8 @@
             this.fileType_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.fileType_comboBox.Enabled = false;
             this.fileType_comboBox.FormattingEnabled = true;
+            this.fileType_comboBox.Items.AddRange(new object[] {
+            "*"});
             this.fileType_comboBox.Location = new System.Drawing.Point(144, 95);
             this.fileType_comboBox.Name = "fileType_comboBox";
             this.fileType_comboBox.Size = new System.Drawing.Size(68, 21);
@@ -124,12 +126,11 @@
             this.result_richTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.result_richTextBox.Location = new System.Drawing.Point(15, 127);
             this.result_richTextBox.Name = "result_richTextBox";
+            this.result_richTextBox.ReadOnly = true;
             this.result_richTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.result_richTextBox.Size = new System.Drawing.Size(773, 311);
             this.result_richTextBox.TabIndex = 8;
             this.result_richTextBox.Text = "";
-            this.result_richTextBox.ReadOnly = true;
-
             // 
             // runApp_button
             // 
@@ -152,7 +153,6 @@
             this.sortingAction_comboBox.Name = "sortingAction_comboBox";
             this.sortingAction_comboBox.Size = new System.Drawing.Size(121, 21);
             this.sortingAction_comboBox.TabIndex = 10;
-            this.sortingAction_comboBox.SelectedIndex = 0;
             // 
             // label2
             // 
