@@ -6,7 +6,7 @@ namespace FileSorterWinForm.Extensions
 {
     public static class RichTextBoxColorExtensions
     {
-        public static void AppendText(this RichTextBox rtb, string text, Color color, bool isNewLine = false)
+        public static RichTextBox AppendText(this RichTextBox rtb, string text, Color color, bool isNewLine = false)
         {
             rtb.SuspendLayout();
             rtb.SelectionStart = rtb.TextLength;
@@ -17,6 +17,8 @@ namespace FileSorterWinForm.Extensions
             rtb.SelectionColor = rtb.ForeColor;
             rtb.ScrollToCaret();
             rtb.ResumeLayout();
+
+            return rtb;
         }
     }
 }

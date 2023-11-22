@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\SortActionBackDownException.cs" />
+    <Compile Include="Extensions\CustomFileSettingsExtensions.cs" />
     <Compile Include="Extensions\RichTextBoxColorExtensions.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -88,7 +89,11 @@
     </Compile>
     <Compile Include="Models\CustomComboBoxValues.cs" />
     <Compile Include="Models\CustomFileSettings.cs" />
+    <Compile Include="Repositories\Implementations\FileSettingsRepository.cs" />
+    <Compile Include="Repositories\Implementations\FormManagerRepository.cs" />
     <Compile Include="Repositories\Implementations\SortActionFactory.cs" />
+    <Compile Include="Repositories\Interfaces\IFileSettingsRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IFormManagerRepository.cs" />
     <Compile Include="Repositories\Interfaces\ISortActionFactory.cs" />
     <Compile Include="Services\Copy.cs" />
     <Compile Include="Services\Interfaces\ISortAction.cs" />
