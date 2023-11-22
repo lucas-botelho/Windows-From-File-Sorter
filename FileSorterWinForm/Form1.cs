@@ -13,6 +13,7 @@ using FileSorterWinForm.Repositories.Interfaces;
 using FileSorterWinForm.Services.Interfaces;
 using FileSorterWinForm.Exceptions;
 using FileSorterWinForm.Repositories.Implementations;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FileSorterWinForm
 {
@@ -46,7 +47,7 @@ namespace FileSorterWinForm
                 var allFiles = Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories);
 
                 formManagerRepository.WriteFileNameAndExtensionOnTextBox(result_richTextBox, allFiles.ToList());
-                formManagerRepository.FillComboBoxWithFileExtensions(fileType_comboBox , fileSettingsRepository.GetFilesExtensionsTypes(allFiles.ToList()));
+                formManagerRepository.FillComboBoxWithFileExtensions(fileType_comboBox, fileSettingsRepository.GetFilesExtensionsTypes(allFiles.ToList()));
             }
         }
 
@@ -61,11 +62,14 @@ namespace FileSorterWinForm
 
         private void runApp_button_Click(object sender, EventArgs e)
         {
+            if (!formManagerRepository.IsFormReadyForSubmission(sortingAction_comboBox, fileType_comboBox, sourcePath_textBox))
+                return;
+
             ISortAction sortAction;
             int movedFiles = 0;
             try
             {
-                sortAction = sortActionFactory.Create(sortingAction_comboBox.Items[sortingAction_comboBox.SelectedIndex].ToString());
+                sortAction = sortActionFactory.Create((string)sortingAction_comboBox.Items[sortingAction_comboBox.SelectedIndex]);
             }
             catch (SortActionBackDownException)
             {
@@ -80,8 +84,7 @@ namespace FileSorterWinForm
 
             foreach (var filePath in filesToBeMoved)
             {
-                var fileSettings = new CustomFileSettings(Path.GetFullPath(filePath));
-                fileSettings.CalculateDestionationSortedFolder(destinationPath_textBox.Text);
+                var fileSettings = new CustomFileSettings(Path.GetFullPath(filePath), destinationPath_textBox.Text);
                 fileSettingsRepository.CreateDirectoryIfMissing(fileSettings.DestinationFolderPath);
                 fileSettings.HandleDuplicatedFileName();
 
@@ -114,6 +117,27 @@ namespace FileSorterWinForm
                             "Success",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
-        }        
+
+            formManagerRepository.ResetProgressBar(progressBar1, progressBar_label);
+        }
+
+        private void sourcePath_textBox_Leave(object sender, EventArgs e)
+        {
+            string sourceDirectory;
+
+            try
+            {
+                sourceDirectory = formManagerRepository.ReadSourceDirectory(sourcePath_textBox);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            var allFiles = Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories);
+
+            formManagerRepository.WriteFileNameAndExtensionOnTextBox(result_richTextBox, allFiles);
+            formManagerRepository.FillComboBoxWithFileExtensions(fileType_comboBox, fileSettingsRepository.GetFilesExtensionsTypes(allFiles.ToList()));
+        }
     }
 }

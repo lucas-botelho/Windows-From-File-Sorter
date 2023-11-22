@@ -14,10 +14,9 @@ namespace FileSorterWinForm.Models
         private IFileDateRepository fileDateRepository { get; set; }
 
 
-        public CustomFileSettings(string filePath)
+        public CustomFileSettings(string filePath, string destinationDirectory)
         {
             fileDateRepository = (IFileDateRepository)Program.ServiceProvider.GetService(typeof(IFileDateRepository));
-
 
             this.SourcePath = Path.GetFullPath(filePath);
             this.PictureDate = fileDateRepository.GetDateTakenFromImage(this.SourcePath);
@@ -26,6 +25,8 @@ namespace FileSorterWinForm.Models
 
             this.FileName = Path.GetFileNameWithoutExtension(filePath);
             this.FileExtension = Path.GetExtension(filePath);
+
+            this.CalculateDestionationSortedFolder(destinationDirectory);
             this.FullDestinationPath = Path.Combine(this.DestinationFolderPath, this.FileName + this.FileExtension);
 
         }
@@ -45,9 +46,9 @@ namespace FileSorterWinForm.Models
 
         public string FileExtension { get; set; }
 
-        public void CalculateDestionationSortedFolder(string destinionationFolder) 
+        public void CalculateDestionationSortedFolder(string destinionationDirectory) 
         {
-            this.DestinationFolderPath = Path.Combine(destinionationFolder, this.PictureDate.Year.ToString(), this.PictureDate.ToString("MM"));
+            this.DestinationFolderPath = Path.Combine(destinionationDirectory, this.PictureDate.Year.ToString(), this.PictureDate.ToString("MM"));
         }
 
     }

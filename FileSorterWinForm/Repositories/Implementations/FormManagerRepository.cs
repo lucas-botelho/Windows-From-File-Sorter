@@ -28,6 +28,7 @@ namespace FileSorterWinForm.Repositories.Implementations
             progressBarLabel.Text = progressBar.Value.ToString() + " %";
         }
 
+
         public void FillComboBoxWithFileExtensions(ComboBox comboBox, List<string> fileExtensions)
         {
             comboBox.Items.Clear();
@@ -41,7 +42,7 @@ namespace FileSorterWinForm.Repositories.Implementations
             comboBox.Enabled = true;
         }
 
-        public void WriteFileNameAndExtensionOnTextBox(RichTextBox rtb, List<string> allFiles)
+        public void WriteFileNameAndExtensionOnTextBox(RichTextBox rtb, IEnumerable<string> allFiles)
         {
             foreach (var file in allFiles)
             {
@@ -50,6 +51,53 @@ namespace FileSorterWinForm.Repositories.Implementations
             }
 
             rtb.AppendText($"Total files: {allFiles.Count()}", Color.Black, true);
+        }
+
+        public string ReadSourceDirectory(TextBox textBox)
+        {
+            string sourceDirectory;
+
+            try
+            {
+                sourceDirectory = Path.GetFullPath(textBox.Text);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception();
+            }
+
+            if (!Directory.Exists(sourceDirectory))
+            {
+                MessageBox.Show("The directory you're trying to sort from does not exist.", "Error");
+                throw new DirectoryNotFoundException();
+            }
+
+            return sourceDirectory;
+        }
+
+        public bool IsFormReadyForSubmission(ComboBox sortingActionComboBox, ComboBox fileTypeComboBox, TextBox sourcePathTextBox)
+        {
+            if (fileTypeComboBox != null && fileTypeComboBox.SelectedIndex == -1)
+            {
+                MessageBox.Show("Select a file type to sort.", "Warning");
+                return false;
+            }
+
+            if (sourcePathTextBox != null && string.IsNullOrEmpty(sourcePathTextBox.Text))
+            {
+                MessageBox.Show("Select the source directory.", "Warning");
+                return false;
+            }
+
+            return true;
+        }
+
+        public void ResetProgressBar(ProgressBar progressBar, Label progressBarLabel)
+        {
+            progressBar.Value = 0;
+            progressBarLabel.Visible = false;
+            progressBarLabel.Text = string.Empty;
+            progressBarLabel.Visible = false;
         }
     }
 }

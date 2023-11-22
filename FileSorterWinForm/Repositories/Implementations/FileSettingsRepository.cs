@@ -16,15 +16,15 @@ namespace FileSorterWinForm.Repositories.Implementations
                 Directory.CreateDirectory(path);
         }
 
-        public List<string> GetFilesExtensionsTypes(List<string> files)
+        public List<string> GetFilesExtensionsTypes(IEnumerable<string> files)
         {
             var fileExtensions = new List<string>();
 
-            files.ForEach(x =>
+            foreach (var file in files)
             {
-                if (!fileExtensions.Contains(Path.GetExtension(x)))
-                    fileExtensions.Add(Path.GetExtension(x));
-            });
+                if (!fileExtensions.Contains(Path.GetExtension(file)))
+                    fileExtensions.Add(Path.GetExtension(file));
+            }
 
             return fileExtensions;
 

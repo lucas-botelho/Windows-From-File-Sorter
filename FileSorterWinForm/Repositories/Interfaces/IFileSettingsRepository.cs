@@ -9,7 +9,7 @@ namespace FileSorterWinForm.Repositories.Interfaces
 {
     internal interface IFileSettingsRepository
     {
-        List<string> GetFilesExtensionsTypes(List<string> files);
+        List<string> GetFilesExtensionsTypes(IEnumerable<string> files);
         void CreateDirectoryIfMissing(string path);
 
     }

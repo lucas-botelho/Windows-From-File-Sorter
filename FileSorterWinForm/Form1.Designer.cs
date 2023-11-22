@@ -60,9 +60,9 @@
             // 
             this.sourcePath_textBox.Location = new System.Drawing.Point(144, 13);
             this.sourcePath_textBox.Name = "sourcePath_textBox";
-            this.sourcePath_textBox.ReadOnly = true;
             this.sourcePath_textBox.Size = new System.Drawing.Size(554, 20);
             this.sourcePath_textBox.TabIndex = 1;
+            this.sourcePath_textBox.Leave += new System.EventHandler(this.sourcePath_textBox_Leave);
             // 
             // sourcePath_label
             // 
@@ -86,7 +86,6 @@
             // 
             this.destinationPath_textBox.Location = new System.Drawing.Point(144, 54);
             this.destinationPath_textBox.Name = "destinationPath_textBox";
-            this.destinationPath_textBox.ReadOnly = true;
             this.destinationPath_textBox.Size = new System.Drawing.Size(554, 20);
             this.destinationPath_textBox.TabIndex = 4;
             // 
@@ -124,12 +123,11 @@
             this.result_richTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.result_richTextBox.Location = new System.Drawing.Point(15, 127);
             this.result_richTextBox.Name = "result_richTextBox";
+            this.result_richTextBox.ReadOnly = true;
             this.result_richTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.result_richTextBox.Size = new System.Drawing.Size(773, 311);
             this.result_richTextBox.TabIndex = 8;
             this.result_richTextBox.Text = "";
-            this.result_richTextBox.ReadOnly = true;
-
             // 
             // runApp_button
             // 
