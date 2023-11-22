@@ -10,17 +10,21 @@ using System.Drawing.Imaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using FileSorterWinForm.Repositories.Interfaces;
+using FileSorterWinForm.Services.Interfaces;
+using FileSorterWinForm.Exceptions;
 
 namespace FileSorterWinForm
 {
     public partial class Form1 : Form
     {
         private IFileDateRepository fileDateRepository { get; set; }
+        private ISortActionFactory sortActionFactory { get; set; }
 
         public Form1()
         {
             InitializeComponent();
             fileDateRepository = (IFileDateRepository)Program.ServiceProvider.GetService(typeof(IFileDateRepository));
+            sortActionFactory = (ISortActionFactory)Program.ServiceProvider.GetService(typeof(ISortActionFactory));
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -54,15 +58,13 @@ namespace FileSorterWinForm
 
         private void runApp_button_Click(object sender, EventArgs e)
         {
-
-            if (sortingAction_comboBox.Items[sortingAction_comboBox.SelectedIndex].Equals("Move"))
+            try
             {
-                DialogResult messageBox = MessageBox.Show("Moving your files can be risky, are you sure you want to proceed?",
-                                                    "Warning",
-                                                    MessageBoxButtons.YesNo,
-                                                    MessageBoxIcon.Warning);
-                if (messageBox == DialogResult.No)
-                    return;
+                var sortAction = sortActionFactory.Create(sortingAction_comboBox.Items[sortingAction_comboBox.SelectedIndex].ToString());
+            }
+            catch (SortActionBackDownException)
+            {
+                return;
             }
 
             var filesToBeMoved = Directory.GetFiles(sourcePath_textBox.Text,

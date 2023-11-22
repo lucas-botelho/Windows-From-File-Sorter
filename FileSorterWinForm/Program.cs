@@ -17,6 +17,7 @@ namespace FileSorterWinForm
         {
             var services = new ServiceCollection();
             services.AddTransient<IFileDateRepository, FileDateRepository>();
+            services.AddTransient<ISortActionFactory, SortActionFactory>();
             ServiceProvider = services.BuildServiceProvider();
         }
         /// <summary>
