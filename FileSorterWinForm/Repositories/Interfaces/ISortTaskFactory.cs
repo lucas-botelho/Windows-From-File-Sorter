@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace FileSorterWinForm.Repositories.Interfaces
 {
-    public interface ISortActionFactory
+    public interface ISortTaskFactory
     {
-        ISortAction Create(string sortActionName);
+        ISorterTask Create(string sortActionName);
     }
 }

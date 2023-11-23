@@ -28,6 +28,7 @@ namespace FileSorterWinForm.Models
 
             this.CalculateDestionationSortedFolder(destinationDirectory);
             this.FullDestinationPath = Path.Combine(this.DestinationFolderPath, this.FileName + this.FileExtension);
+            HandleDuplicatedFileName();
 
         }
 
@@ -49,6 +50,22 @@ namespace FileSorterWinForm.Models
         public void CalculateDestionationSortedFolder(string destinionationDirectory) 
         {
             this.DestinationFolderPath = Path.Combine(destinionationDirectory, this.PictureDate.Year.ToString(), this.PictureDate.ToString("MM"));
+        }
+
+
+        private void HandleDuplicatedFileName()
+        {
+            var repeatedFileCount = 1;
+
+            while (File.Exists(this.FullDestinationPath))
+            {
+                if (repeatedFileCount == 1)
+                    this.FileName += $"({++repeatedFileCount})";
+                else
+                    this.FileName = this.FileName.Replace($"({repeatedFileCount})", $"({++repeatedFileCount})");
+
+                this.FullDestinationPath = this.FullDestinationPath.Replace(Path.GetFileNameWithoutExtension(this.FullDestinationPath), this.FileName);
+            }
         }
 
     }

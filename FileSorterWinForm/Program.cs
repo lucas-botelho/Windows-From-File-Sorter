@@ -17,7 +17,7 @@ namespace FileSorterWinForm
         {
             var services = new ServiceCollection();
             services.AddTransient<IFileDateRepository, FileDateRepository>();
-            services.AddTransient<ISortActionFactory, SortActionFactory>();
+            services.AddTransient<ISortTaskFactory, SortTaskFactory>();
             services.AddTransient<IFormManagerRepository, FormManagerRepository>();
             services.AddTransient<IFileSettingsRepository, FileSettingsRepository>();
             ServiceProvider = services.BuildServiceProvider();

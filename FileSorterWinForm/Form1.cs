@@ -19,14 +19,14 @@ namespace FileSorterWinForm
 {
     public partial class Form1 : Form
     {
-        private ISortActionFactory sortActionFactory { get; set; }
+        private ISortTaskFactory sortTaskFactory { get; set; }
         private IFormManagerRepository formManagerRepository { get; set; }
         private IFileSettingsRepository fileSettingsRepository { get; set; }
 
         public Form1()
         {
             InitializeComponent();
-            sortActionFactory = (ISortActionFactory)Program.ServiceProvider.GetService(typeof(ISortActionFactory));
+            sortTaskFactory = (ISortTaskFactory)Program.ServiceProvider.GetService(typeof(ISortTaskFactory));
             formManagerRepository = (IFormManagerRepository)Program.ServiceProvider.GetService(typeof(IFormManagerRepository));
             fileSettingsRepository = (IFileSettingsRepository)Program.ServiceProvider.GetService(typeof(IFileSettingsRepository));
         }
@@ -65,33 +65,33 @@ namespace FileSorterWinForm
             if (!formManagerRepository.IsFormReadyForSubmission(sortingAction_comboBox, fileType_comboBox, sourcePath_textBox))
                 return;
 
-            ISortAction sortAction;
-            int movedFiles = 0;
+            ISorterTask task;
+            int countMovedFiles = 0;
             try
             {
-                sortAction = sortActionFactory.Create((string)sortingAction_comboBox.Items[sortingAction_comboBox.SelectedIndex]);
+                task = sortTaskFactory.Create((string)sortingAction_comboBox.Items[sortingAction_comboBox.SelectedIndex]);
             }
             catch (SortActionBackDownException)
             {
                 return;
             }
 
+            progressBar1.Visible = true;
+
+
             var filesToBeMoved = Directory.GetFiles(sourcePath_textBox.Text,
                                            $"*.{fileType_comboBox.Items[fileType_comboBox.SelectedIndex].ToString().Trim('.')}",
                                            SearchOption.AllDirectories);
 
-            progressBar1.Visible = true;
-
             foreach (var filePath in filesToBeMoved)
             {
                 var fileSettings = new CustomFileSettings(Path.GetFullPath(filePath), destinationPath_textBox.Text);
-                fileSettingsRepository.CreateDirectoryIfMissing(fileSettings.DestinationFolderPath);
-                fileSettings.HandleDuplicatedFileName();
+
 
                 try
                 {
-                    sortAction.Execute(fileSettings.SourcePath, fileSettings.FullDestinationPath);
-                    movedFiles++;
+                    task.Execute(fileSettings);
+                    countMovedFiles++;
                     formManagerRepository.UpdateProgressBar(progressBar1, progressBar_label, filesToBeMoved.Count());
 
                     result_richTextBox
@@ -107,16 +107,17 @@ namespace FileSorterWinForm
                     formManagerRepository.UpdateProgressBar(progressBar1, progressBar_label, filesToBeMoved.Count());
 
                     result_richTextBox
-                        .AppendText($"Could not copy file --> {Path.GetFullPath(filePath)}", Color.Red, true)
+                        .AppendText($"Could not copy file -> {Path.GetFullPath(filePath)}", Color.Red, true)
                         .AppendText($"Message: {ex.Message}", Color.DarkGoldenrod, true);
                 }
             }
 
-            result_richTextBox.AppendText($"Total files moves: {movedFiles}");
+            result_richTextBox.AppendText($"Total files moves: {countMovedFiles}");
             MessageBox.Show("Job finished!",
                             "Success",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
+
 
             formManagerRepository.ResetProgressBar(progressBar1, progressBar_label);
         }

@@ -91,17 +91,18 @@
     <Compile Include="Models\CustomFileSettings.cs" />
     <Compile Include="Repositories\Implementations\FileSettingsRepository.cs" />
     <Compile Include="Repositories\Implementations\FormManagerRepository.cs" />
-    <Compile Include="Repositories\Implementations\SortActionFactory.cs" />
+    <Compile Include="Repositories\Implementations\SortTaskFactory.cs" />
     <Compile Include="Repositories\Interfaces\IFileSettingsRepository.cs" />
     <Compile Include="Repositories\Interfaces\IFormManagerRepository.cs" />
-    <Compile Include="Repositories\Interfaces\ISortActionFactory.cs" />
-    <Compile Include="Services\Copy.cs" />
-    <Compile Include="Services\Interfaces\ISortAction.cs" />
+    <Compile Include="Repositories\Interfaces\ISortTaskFactory.cs" />
+    <Compile Include="Services\SorterTaskCopy.cs" />
+    <Compile Include="Services\Interfaces\ISorterTask.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\Implementations\FileDateRepository.cs" />
     <Compile Include="Repositories\Interfaces\IFileDateRepository.cs" />
-    <Compile Include="Services\Move.cs" />
+    <Compile Include="Services\SorterTaskMove.cs" />
+    <Compile Include="Services\SorterTask.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

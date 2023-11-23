@@ -11,9 +11,9 @@ using System.Windows.Forms;
 
 namespace FileSorterWinForm.Repositories.Implementations
 {
-    public class SortActionFactory : ISortActionFactory
+    public class SortTaskFactory : ISortTaskFactory
     {
-        public ISortAction Create(string sortActionName)
+        public ISorterTask Create(string sortActionName)
         {
             switch (sortActionName)
             {
@@ -27,13 +27,13 @@ namespace FileSorterWinForm.Repositories.Implementations
                         throw;
                     }
                 case "Copy":
-                    return new SortActionCopy();
+                    return new SorterTaskCopy();
                 default:
-                    return new SortActionCopy();
+                    return new SorterTaskCopy();
             }
         }
 
-        private SortActionMove CreateSortActionMove()  
+        private SorterTaskMove CreateSortActionMove()  
         {
             
             DialogResult messageBox = MessageBox.Show("Moving your files can be risky, are you sure you want to proceed?",
@@ -41,7 +41,7 @@ namespace FileSorterWinForm.Repositories.Implementations
                                                 MessageBoxButtons.YesNo,
                                                 MessageBoxIcon.Warning);
             
-            return messageBox == DialogResult.No ? throw new SortActionBackDownException() : new SortActionMove();
+            return messageBox == DialogResult.No ? throw new SortActionBackDownException() : new SorterTaskMove();
         }
     }
 }
