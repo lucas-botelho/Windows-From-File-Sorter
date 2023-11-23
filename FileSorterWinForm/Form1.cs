@@ -141,14 +141,11 @@ namespace FileSorterWinForm
             formManagerRepository.WriteFileNameAndExtensionOnTextBox(result_richTextBox, allFiles);
             formManagerRepository.FillComboBoxWithFileExtensions(fileType_comboBox, fileSettingsRepository.GetFilesExtensionsTypes(allFiles.ToList()));
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             var filesToBeMoved = Directory.GetFiles(sourcePath_textBox.Text,
                                            $"*.{fileType_comboBox.Items[fileType_comboBox.SelectedIndex].ToString().Trim('.')}",
                                            SearchOption.AllDirectories);
-
-            var filesToComparedWith = (string[])filesToBeMoved.Clone();
 
             foreach (var file in filesToBeMoved)
             {
@@ -191,6 +188,7 @@ namespace FileSorterWinForm
                             {
                                 MessageBox.Show("Sorry, Images are not same");
                             }
+
                         }
                     }
 
