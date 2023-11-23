@@ -14,6 +14,7 @@ using FileSorterWinForm.Services.Interfaces;
 using FileSorterWinForm.Exceptions;
 using FileSorterWinForm.Repositories.Implementations;
 using System.Security.Cryptography.X509Certificates;
+using System.Xml.Linq;
 
 namespace FileSorterWinForm
 {
@@ -139,6 +140,63 @@ namespace FileSorterWinForm
 
             formManagerRepository.WriteFileNameAndExtensionOnTextBox(result_richTextBox, allFiles);
             formManagerRepository.FillComboBoxWithFileExtensions(fileType_comboBox, fileSettingsRepository.GetFilesExtensionsTypes(allFiles.ToList()));
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var filesToBeMoved = Directory.GetFiles(sourcePath_textBox.Text,
+                                           $"*.{fileType_comboBox.Items[fileType_comboBox.SelectedIndex].ToString().Trim('.')}",
+                                           SearchOption.AllDirectories);
+
+            var filesToComparedWith = (string[])filesToBeMoved.Clone();
+
+            foreach (var file in filesToBeMoved)
+            {
+
+                if (Path.GetExtension(file).ToLower().Equals("png") || Path.GetExtension(file).ToLower().Equals(".png"))
+                {
+                    foreach (var file1 in filesToBeMoved)
+                    {
+                        if (Path.GetExtension(file1).ToLower().Equals("png") || Path.GetExtension(file1).ToLower().Equals(".png"))
+                        {
+                            string img1_ref, img2_ref;
+                            var img1 = new Bitmap(file);
+                            var img2 = new Bitmap(file1);
+                            int count1 = 0, count2 = 0;
+                            bool flag = true;
+
+                            if (img1.Width == img2.Width && img1.Height == img2.Height)
+                            {
+                                for (int i = 0; i < img1.Width; i++)
+                                {
+                                    for (int j = 0; j < img1.Height; j++)
+                                    {
+                                        img1_ref = img1.GetPixel(i, j).ToString();
+                                        img2_ref = img2.GetPixel(i, j).ToString();
+                                        if (img1_ref != img2_ref)
+                                        {
+                                            count2++;
+                                            flag = false;
+                                            break;
+                                        }
+                                        count1++;
+                                    }
+                                }
+                                if (flag == false)
+                                    MessageBox.Show("Sorry, Images are not same , " + count2 + " wrong pixels found");
+                                else
+                                    MessageBox.Show(" Images are same , " + count1 + " same pixels found and " + count2 + " wrong pixels found");
+                            }
+                            else
+                            {
+                                MessageBox.Show("Sorry, Images are not same");
+                            }
+                        }
+                    }
+
+                }
+            }
+
         }
     }
 }
