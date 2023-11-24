@@ -43,8 +43,10 @@ namespace FileSorterWinForm.Repositories.Implementations
             fileSettings.ModifiedDate = new FileInfo(fileSettings.SourcePath).LastWriteTimeUtc;
             fileSettings.CreationDate = new FileInfo(fileSettings.SourcePath).CreationTime;
 
+            //add exception handling for filename
+            //make oop refactor
             //Handle gopro files -- GOPRO file set modified date as 2016
-            if (fileSettings.SourcePath.StartsWith("GH") || fileSettings.SourcePath.StartsWith("GOPR") || fileSettings.SourcePath.StartsWith("GX"))
+            if (fileSettings.FileName.StartsWith("GH") || fileSettings.FileName.StartsWith("GOPR") || fileSettings.FileName.StartsWith("GX"))
                 fileSettings.PictureDate = fileSettings.CreationDate;
             else
                 fileSettings.PictureDate = fileSettings.ModifiedDate < fileSettings.CreationDate ? fileSettings.ModifiedDate : fileSettings.CreationDate;

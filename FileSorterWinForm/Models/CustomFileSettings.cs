@@ -18,17 +18,15 @@ namespace FileSorterWinForm.Models
         {
             fileDateRepository = (IFileDateRepository)Program.ServiceProvider.GetService(typeof(IFileDateRepository));
 
-            this.SourcePath = Path.GetFullPath(filePath);
-            this.PictureDate = fileDateRepository.GetDateTakenFromImage(this.SourcePath);
-            if (this.PictureDate == DateTime.MinValue)
-                fileDateRepository.GetFileDateFromFileInfo(this);
+            SourcePath = Path.GetFullPath(filePath);
+            FileExtension = Path.GetExtension(filePath);
+            FileName = Path.GetFileNameWithoutExtension(filePath);
 
-            this.FileName = Path.GetFileNameWithoutExtension(filePath);
-            this.FileExtension = Path.GetExtension(filePath);
+            PictureDate = fileDateRepository.GetDateTakenFromImage(this.SourcePath);
+            fileDateRepository.GetFileDateFromFileInfo(this);
 
-            this.CalculateDestionationSortedFolder(destinationDirectory);
-            this.FullDestinationPath = Path.Combine(this.DestinationFolderPath, this.FileName + this.FileExtension);
-            HandleDuplicatedFileName();
+            CalculateDestionationSortedFolder(destinationDirectory);
+            CalculateFullDestionationPathWithDuplicates();
 
         }
 
@@ -37,6 +35,7 @@ namespace FileSorterWinForm.Models
         public DateTime ModifiedDate { get; set; }
 
         public DateTime PictureDate { get; set; }
+
         public string SourcePath { get; set; }
 
         public string DestinationFolderPath { get; set; }
@@ -47,26 +46,27 @@ namespace FileSorterWinForm.Models
 
         public string FileExtension { get; set; }
 
-        public void CalculateDestionationSortedFolder(string destinionationDirectory) 
+        public void CalculateDestionationSortedFolder(string destinionationDirectory)
         {
             this.DestinationFolderPath = Path.Combine(destinionationDirectory, this.PictureDate.Year.ToString(), this.PictureDate.ToString("MM"));
         }
 
 
-        private void HandleDuplicatedFileName()
+        private void CalculateFullDestionationPathWithDuplicates()
         {
-            var repeatedFileCount = 1;
+            var repeatedFileCount = 0;
+
+            FullDestinationPath = Path.Combine(this.DestinationFolderPath, this.FileName + this.FileExtension);
 
             while (File.Exists(this.FullDestinationPath))
             {
-                if (repeatedFileCount == 1)
+                if (repeatedFileCount == 0)
                     this.FileName += $"({++repeatedFileCount})";
                 else
                     this.FileName = this.FileName.Replace($"({repeatedFileCount})", $"({++repeatedFileCount})");
 
-                this.FullDestinationPath = this.FullDestinationPath.Replace(Path.GetFileNameWithoutExtension(this.FullDestinationPath), this.FileName);
+                FullDestinationPath = Path.Combine(this.DestinationFolderPath, this.FileName + this.FileExtension);
             }
         }
-
     }
 }
